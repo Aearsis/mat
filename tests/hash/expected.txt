@@ -1,0 +1,42 @@
+      test : registering table
+    mat_tc : created block 100
+     table : table 1 registered (type 0, 1-part key)
+           : ----------------------------------------
+      test : testing packet delivery (nothing should happen yet)
+    kernel : skb of traffic class 0 is to be received.
+           : ----------------------------------------
+      test : hooking block 100 to netdev's ingress
+      test : mat table 1 bound on ingress
+           : ----------------------------------------
+      test : testing packet delivery (MAT should see the packet)
+  executor : looking up flow in table 1
+    parser : found <source mac> = 1108152157446 / 0x10203040506  in <ethernet>
+  executor : executing default chain
+    kernel : skb of traffic class 0 is to be received.
+           : ----------------------------------------
+      test : setting the default chain
+           : ----------------------------------------
+      test : testing packet delivery (MAT should execute default chain)
+  executor : looking up flow in table 1
+    parser : found <source mac> = 1108152157446 / 0x10203040506  in <ethernet>
+  executor : executing default chain
+  executor : 	print: The flow did not match.
+    kernel : skb of traffic class 0 is to be received.
+           : ----------------------------------------
+      test : inserting a flow to drop the packet
+     table : mask of 1 parts:  0000000000000000
+     table : value of 1 parts:  0x00010203040506
+           : ----------------------------------------
+      test : testing packet delivery (MAT should drop the packet)
+  executor : looking up flow in table 1
+    parser : found <source mac> = 1108152157446 / 0x10203040506  in <ethernet>
+  executor : executing flow chain
+  executor : 	print: You shall not pass!
+  executor : 	drop
+           : ----------------------------------------
+      test : testing another packet delivery (MAT should see, but pass the packet)
+  executor : looking up flow in table 1
+    parser : found <source mac> = 244837814108159 / 0xdeadbeefffff  in <ethernet>
+  executor : executing default chain
+  executor : 	print: The flow did not match.
+    kernel : skb of traffic class 0 is to be received.

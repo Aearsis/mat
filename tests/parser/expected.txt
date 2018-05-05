@@ -1,0 +1,94 @@
+      test : dumping parser before...
+    parser : root <ethernet>:
+    parser :     fixed 12B header
+    parser :     field "destination mac" (off 0 w 48)
+    parser :     field "source mac" (off 48 w 48)
+    parser :     nexthdr (off 96 w 16)
+    parser :     :-- [0x8100] -> <vlan>
+    parser :     :       fixed 2B header
+    parser :     :       field "vlan id" (off 20 w 12)
+    parser :     :       nexthdr (off 32 w 16)
+    parser :     :       :-- [0x8100] -> <inner vlan>
+    parser :     :       :       fixed 2B header
+    parser :     :       :       field "inner vlan id" (off 20 w 12)
+    parser :     :       :       nexthdr (off 32 w 16)
+    parser :     :       :       :-- [else] -> <ethertype>
+    parser :     :       :       :       fixed 2B header
+    parser :     :       :       :       field "ethertype" (off 0 w 16)
+    parser :     :       :       :       nexthdr (off 0 w 16)
+    parser :     :       :       :       :-- [0x0800] -> <ip>
+    parser :     :       :       :       :       hdrsize (off 4 w 4) * 4 + 0
+    parser :     :       :       :       :       field "ip protocol" (off 72 w 8)
+    parser :     :       :       :       :       field "source ip" (off 96 w 32)
+    parser :     :       :       :       :       field "destination ip" (off 128 w 32)
+    parser :     :       :       :       :       field "source tcp/udp port" (off 160 w 16)
+    parser :     :       :       :       :       field "destination tcp/udp port" (off 176 w 16)
+    parser :     :       :       :       :       nexthdr (off 72 w 8)
+    parser :     :       :       :       :       :-- [0x06] -> <tcp>
+    parser :     :       :       :       :       :       fixed 24B header
+    parser :     :       :       :       :       :       field "source port" (off 0 w 16)
+    parser :     :       :       :       :       :       field "destination port" (off 16 w 16)
+    parser :     :       :       :       :       :       nexthdr (off 16 w 16)
+    parser :     :       :       :       :       :-- [0x11] -> <udp>
+    parser :     :       :       :       :       :       fixed 8B header
+    parser :     :       :       :       :       :       field "source port" (off 0 w 16)
+    parser :     :       :       :       :       :       field "destination port" (off 16 w 16)
+    parser :     :       :       :       :       :       nexthdr (off 16 w 16)
+    parser :     :       :-- [else] -> <ethertype>
+    parser :     :       :       (ommited)
+    parser :     :-- [else] -> <ethertype>
+    parser :     :       (ommited)
+           : ----------------------------------------
+      test : registering custom parser
+    parser : registered parser vxlan idx 8
+    parser : registered field VNI idx 23
+           : ----------------------------------------
+      test : dumping parser after...
+    parser : root <ethernet>:
+    parser :     fixed 12B header
+    parser :     field "destination mac" (off 0 w 48)
+    parser :     field "source mac" (off 48 w 48)
+    parser :     nexthdr (off 96 w 16)
+    parser :     :-- [0x8100] -> <vlan>
+    parser :     :       fixed 2B header
+    parser :     :       field "vlan id" (off 20 w 12)
+    parser :     :       nexthdr (off 32 w 16)
+    parser :     :       :-- [0x8100] -> <inner vlan>
+    parser :     :       :       fixed 2B header
+    parser :     :       :       field "inner vlan id" (off 20 w 12)
+    parser :     :       :       nexthdr (off 32 w 16)
+    parser :     :       :       :-- [else] -> <ethertype>
+    parser :     :       :       :       fixed 2B header
+    parser :     :       :       :       field "ethertype" (off 0 w 16)
+    parser :     :       :       :       nexthdr (off 0 w 16)
+    parser :     :       :       :       :-- [0x0800] -> <ip>
+    parser :     :       :       :       :       hdrsize (off 4 w 4) * 4 + 0
+    parser :     :       :       :       :       field "ip protocol" (off 72 w 8)
+    parser :     :       :       :       :       field "source ip" (off 96 w 32)
+    parser :     :       :       :       :       field "destination ip" (off 128 w 32)
+    parser :     :       :       :       :       field "source tcp/udp port" (off 160 w 16)
+    parser :     :       :       :       :       field "destination tcp/udp port" (off 176 w 16)
+    parser :     :       :       :       :       nexthdr (off 72 w 8)
+    parser :     :       :       :       :       :-- [0x06] -> <tcp>
+    parser :     :       :       :       :       :       fixed 24B header
+    parser :     :       :       :       :       :       field "source port" (off 0 w 16)
+    parser :     :       :       :       :       :       field "destination port" (off 16 w 16)
+    parser :     :       :       :       :       :       nexthdr (off 16 w 16)
+    parser :     :       :       :       :       :-- [0x11] -> <udp>
+    parser :     :       :       :       :       :       fixed 8B header
+    parser :     :       :       :       :       :       field "source port" (off 0 w 16)
+    parser :     :       :       :       :       :       field "destination port" (off 16 w 16)
+    parser :     :       :       :       :       :       nexthdr (off 16 w 16)
+    parser :     :       :       :       :       :       :-- [0x12b5] -> <vxlan>
+    parser :     :       :       :       :       :       :       field "VNI" (off 16 w 16)
+    parser :     :       :-- [else] -> <ethertype>
+    parser :     :       :       (ommited)
+    parser :     :-- [else] -> <ethertype>
+    parser :     :       (ommited)
+           : ----------------------------------------
+      test : registering table
+    mat_tc : created block 100
+     table : table 1 registered (type 2, 1-part key)
+      test : hooking block 100 to netdev's ingress
+      test : would extract 16 bits from offset 16 within the UDP payload.
+           : ----------------------------------------

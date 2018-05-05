@@ -1,0 +1,36 @@
+      test : registering table
+    mat_tc : created block 100
+     table : table 1 registered (type 2, 1-part key)
+      test : hooking block 100 to netdev's ingress
+    netdev : netdev bound to table 1
+           : ----------------------------------------
+      test : testing packet delivery (both should be delivered, HW filter misses them, software not invoked)
+       nic : parsing the packet in hardware
+       nic : hardware filter allowed the packet, no cookie
+  executor : executing default chain
+    kernel : skb of traffic class 0 is to be received.
+       nic : parsing the packet in hardware
+       nic : hardware filter allowed the packet, no cookie
+  executor : executing default chain
+    kernel : skb of traffic class 0 is to be received.
+           : ----------------------------------------
+      test : inserting a flow to drop the packet A
+     table : mask of 1 parts:  0xffffffffffffffff
+     table : value of 1 parts:  0xbadf00dabcdef42
+       nic : rule inserted to the "hardware"
+           : ----------------------------------------
+      test : testing packet A delivery (the NIC should drop the packet in hardware)
+       nic : parsing the packet in hardware
+       nic : the packet was dropped in hardware
+           : ----------------------------------------
+      test : inserting a flow to comment packet B (but not drop)
+     table : mask of 1 parts:  0x000001ffffffff
+     table : value of 1 parts:  0x0000000badf00d
+       nic : rule inserted to the "hardware"
+           : ----------------------------------------
+      test : testing packet B (packet should be classified by HW, commented by sw, then delivered)
+       nic : parsing the packet in hardware
+       nic : hardware filter allowed the packet, got cookie
+  executor : executing flow chain
+  executor : 	print: This action is executed in software.
+    kernel : skb of traffic class 0 is to be received.

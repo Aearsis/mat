@@ -1,0 +1,79 @@
+      test : registering tables
+    mat_tc : created block 100
+     table : table 1 registered (type 1, 1-part key)
+    mat_tc : created block 101
+     table : table 2 registered (type 1, 1-part key)
+    mat_tc : created block 102
+     table : table 3 registered (type 1, 1-part key)
+     table : mask of 1 parts:  0000000000000000
+     table : value of 1 parts:  0x00000000060800
+     table : mask of 1 parts:  0000000000000000
+     table : value of 1 parts:  0x00000000000016
+     table : mask of 1 parts:  0000000000000000
+     table : value of 1 parts:  0x00cafecafecafe
+      test : mat table 1 bound on ingress
+           : ----------------------------------------
+      test : testing packet delivery:
+      test : 	 1. packet should be dropped by B
+      test : 	 2. packet should be set TC by B, but dropped by C
+      test : 	 3. packet should avoid B, and dropped by C
+      test : 	 4. packet should be delivered with TC 42 after going through all the tables
+  executor : looking up flow in table 1
+    parser : found <ethertype> = 2048 / 0x800  in <ethertype>
+    parser : found <ip protocol> = 6 / 0x6  in <ip>
+  executor : executing flow chain
+  executor : 	print: Table A: TCP packet
+  executor : 	set next table to 2
+  executor : looking up flow in table 2
+    parser : found <destination port> = 42 / 0x2a  in <tcp>
+  executor : executing default chain
+  executor : 	print: Table B: missed
+  executor : 	drop
+           : ----------------------------------------
+  executor : looking up flow in table 1
+    parser : found <ethertype> = 2048 / 0x800  in <ethertype>
+    parser : found <ip protocol> = 6 / 0x6  in <ip>
+  executor : executing flow chain
+  executor : 	print: Table A: TCP packet
+  executor : 	set next table to 2
+  executor : looking up flow in table 2
+    parser : found <destination port> = 22 / 0x16  in <tcp>
+  executor : executing flow chain
+  executor : 	print: Table B: Port 22
+  executor : 	set traffic class to 42
+  executor : 	set next table to 3
+  executor : looking up flow in table 3
+    parser : found <destination mac> = 1108152157446 / 0x10203040506  in <ethernet>
+  executor : executing default chain
+  executor : 	print: Table C: missed
+  executor : 	drop
+           : ----------------------------------------
+  executor : looking up flow in table 1
+    parser : found <ethertype> = 2048 / 0x800  in <ethertype>
+    parser : found <ip protocol> = 17 / 0x11  in <ip>
+  executor : executing default chain
+  executor : 	print: Table A: missed
+  executor : 	set next table to 3
+  executor : looking up flow in table 3
+    parser : found <destination mac> = 1108152157446 / 0x10203040506  in <ethernet>
+  executor : executing default chain
+  executor : 	print: Table C: missed
+  executor : 	drop
+           : ----------------------------------------
+  executor : looking up flow in table 1
+    parser : found <ethertype> = 2048 / 0x800  in <ethertype>
+    parser : found <ip protocol> = 6 / 0x6  in <ip>
+  executor : executing flow chain
+  executor : 	print: Table A: TCP packet
+  executor : 	set next table to 2
+  executor : looking up flow in table 2
+    parser : found <destination port> = 22 / 0x16  in <tcp>
+  executor : executing flow chain
+  executor : 	print: Table B: Port 22
+  executor : 	set traffic class to 42
+  executor : 	set next table to 3
+  executor : looking up flow in table 3
+    parser : found <destination mac> = 223195676199678 / 0xcafecafecafe  in <ethernet>
+  executor : executing flow chain
+  executor : 	print: Table C: hit
+    kernel : skb of traffic class 42 is to be received.
