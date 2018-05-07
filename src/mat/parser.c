@@ -190,8 +190,9 @@ static int field_index = __MAT_FIELD_FIRST_CUSTOM;
 static void __attribute__((constructor)) mat_parser_init()
 {
 	struct mat_parser *p;
+	size_t i;
 
-	for (size_t i = 1; i < __MAT_FIELD_FIRST_CUSTOM; i++) {
+	for (i = 1; i < __MAT_FIELD_FIRST_CUSTOM; i++) {
 		mat_tcam_init(&mat_parsers[i].next_parser);
 	}
 
@@ -338,9 +339,11 @@ static int mat_parser_dump_indent(struct mat_parser *p, unsigned ind_len, bool s
 	struct mat_tcam_prio *prio;
 	struct mat_tcam_rule *rule;
 	char indent [ind_len + 1];
+	mat_field_index i;
+	size_t j;
 
-	for (size_t i = 0; i < ind_len; i++)
-		indent[i] = "    :   "[i % 8];
+	for (j = 0; j < ind_len; j++)
+		indent[j] = "    :   "[j % 8];
 	indent[ind_len] = '\0';
 
 	const mat_parser_index idx = parser_get_index(p);
@@ -358,7 +361,7 @@ static int mat_parser_dump_indent(struct mat_parser *p, unsigned ind_len, bool s
 			log("%shdrsize (off %i w %i) * %i + %i", indent, hs->offset, hs->width, 1 << hs->shift, hs->add);
 	}
 
-	for (mat_field_index i = 1; i < field_index; i++) {
+	for (i = 1; i < field_index; i++) {
 		struct mat_header_field *f = mat_header_field_get(i);
 		if (f->parser != idx)
 			continue;

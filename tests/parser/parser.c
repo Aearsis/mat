@@ -65,6 +65,8 @@ int main(int argc, char ** argv)
 	log("hooking block %u to netdev's ingress", ingress_block);
 	tc_modify_qdisc(test_netdev, ingress_block, 0);
 	hr();
+
+	return 0;
 }
 
 /* Find an offset of a the field inside the transport network layer payload.

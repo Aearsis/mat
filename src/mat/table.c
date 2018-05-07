@@ -90,12 +90,13 @@ mat_header_field_value mat_flow_key_get_field(struct mat_flow_key *fkey, struct 
  */
 static void table_init_flow_key_mapping(struct mat_table *tbl)
 {
+	unsigned offset = 0;
+	unsigned part = 0;
+	size_t i;
+
 	tbl->field_alloc = kzalloc(tbl->field_count * sizeof(*tbl->field_alloc), GFP_KERNEL);
 
-	unsigned part = 0;
-	unsigned offset = 0;
-
-	for (unsigned i = 0; i < tbl->field_count; i++) {
+	for (i = 0; i < tbl->field_count; i++) {
 		unsigned width = mat_field_get_width(tbl->fields[i]);
 
 		if (offset + width > 64) {
@@ -150,11 +151,12 @@ mat_table_index mat_table_register(const struct mat_table_template *template)
 /* Calculate a flow key for the given table and skb. */
 int mat_table_compute_key(struct mat_flow_key *key, struct mat_table *tbl, struct sk_buff *skb)
 {
+	size_t i;
 	int err;
 
 	memset(key, 0, mat_flow_key_size(tbl));
 
-	for (size_t i = 0; i < tbl->field_count; i++) {
+	for (i = 0; i < tbl->field_count; i++) {
 		mat_header_field_value val;
 		err = mat_parser_extract_field(&val, MAT_PARSER_ETHERNET, tbl->fields[i], skb);
 		if (err)
@@ -172,8 +174,9 @@ void mat_flow_key_dump(struct mat_table *tbl, struct mat_flow_key *key, const ch
 	size_t size = tbl->flow_key_parts * 19 + 1;
 	char buf [size];
 	size_t used = 0;
+	unsigned i;
 
-	for (unsigned i = 0; i < tbl->flow_key_parts; i++) {
+	for (i = 0; i < tbl->flow_key_parts; i++) {
 		used += snprintf(buf + used, size - used, " %#016" PRIx64, key->part[i]);
 	}
 
@@ -186,8 +189,9 @@ void mat_flow_key_dump(struct mat_table *tbl, struct mat_flow_key *key, const ch
 void mat_flow_key_and(const struct mat_table *tbl, struct mat_flow_key *dest,
 	const struct mat_flow_key *a, const struct mat_flow_key *b)
 {
+	unsigned i;
 
-	for (unsigned i = 0; i < tbl->flow_key_parts; i++) {
+	for (i = 0; i < tbl->flow_key_parts; i++) {
 		dest->part[i] = a->part[i] & b->part[i];
 	}
 }
@@ -196,7 +200,9 @@ void mat_flow_key_and(const struct mat_table *tbl, struct mat_flow_key *dest,
 bool mat_flow_key_equal(const struct mat_table *tbl,
 	const struct mat_flow_key *a, const struct mat_flow_key *b)
 {
-	for (unsigned i = 0; i < tbl->flow_key_parts; i++) {
+	unsigned i;
+
+	for (i = 0; i < tbl->flow_key_parts; i++) {
 		if (a->part[i] != b->part[i])
 			return false;
 	}
@@ -212,7 +218,9 @@ static u64 mat_flow_key_hash(const struct mat_table *tbl,
 	const struct mat_flow_key *key)
 {
 	u64 hash = 0xdeadbeef;
-	for (unsigned i = 0; i < tbl->flow_key_parts; i++)
+	unsigned i;
+
+	for (i = 0; i < tbl->flow_key_parts; i++)
 		hash ^= (179426407 * key->part[i] >> i);
 	return hash;
 }

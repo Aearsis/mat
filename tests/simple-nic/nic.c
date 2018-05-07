@@ -55,13 +55,15 @@ int flow_insert(struct net_device *dev, struct mat_table *tbl,
 {
 	struct simple_nic_priv *priv = netdev_priv(dev);
 	struct ftuple_rule *rule = kzalloc(sizeof(*rule), GFP_KERNEL);
+	size_t i;
+
 	if (!rule)
 		return ENOMEM;
 
 	INIT_LIST_HEAD(&rule->in_priv);
 	rule->cookie = action_id;
 
-	for (size_t i = 0; i < tbl->field_count; ++i) {
+	for (i = 0; i < tbl->field_count; ++i) {
 		switch (tbl->fields[i]) {
 		case MAT_FIELD_IP_PROTO:
 			rule->mask.ipproto = mat_flow_key_get_field(mask, tbl, i);
@@ -111,6 +113,8 @@ int setup_mat(struct net_device *dev, struct tcf_block *mat)
 {
 	struct simple_nic_priv *priv = netdev_priv(dev);
 	struct mat_table *tbl = mat->filter->data;
+	size_t i;
+
 	assert(mat->type == TCF_BLOCK_MAT);
 
 	if (priv->ftuple_tbl) {
@@ -120,7 +124,7 @@ int setup_mat(struct net_device *dev, struct tcf_block *mat)
 	if (tbl->type != MAT_TABLE_TYPE_TCAM)
 		return -EOPNOTSUPP;
 
-	for (size_t i = 0; i < tbl->field_count; ++i)
+	for (i = 0; i < tbl->field_count; ++i)
 		switch (tbl->fields[i]) {
 			case MAT_FIELD_IP_PROTO:
 			case MAT_FIELD_IP_SRC:

@@ -105,7 +105,9 @@ static inline size_t mat_table_field_count(struct mat_table *tbl)
  */
 static inline bool mat_table_uses_field(struct mat_table *tbl, mat_field_index fld)
 {
-	for (size_t i = 0; i < tbl->field_count; ++i)
+	size_t i;
+
+	for (i = 0; i < tbl->field_count; ++i)
 		if (tbl->fields[i] == fld)
 			return true;
 	return false;

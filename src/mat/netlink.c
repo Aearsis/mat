@@ -63,7 +63,9 @@ u32 mat_nl_table_get_block_index(mat_table_index table)
 static int nl_parse_flow_field_arg(struct mat_table *tbl, struct mat_flow_key *fkey,
 	struct mat_msg_arg *arg, size_t *processed)
 {
-	for (size_t j = 0; j < tbl->field_count; j++) {
+	size_t j;
+
+	for (j = 0; j < tbl->field_count; j++) {
 		if (arg->field.field == tbl->fields[j]) {
 			mat_flow_key_set_field(fkey, tbl, j, arg->field.value);
 			return 0;
@@ -76,7 +78,9 @@ static int nl_parse_flow_field_arg(struct mat_table *tbl, struct mat_flow_key *f
 static int nl_parse_flow_key_args(struct mat_table *tbl, struct mat_flow_key *mask, struct mat_flow_key *value,
 	struct mat_msg *msg, size_t *processed)
 {
-	for (size_t i = 0; i < msg->arg_count; i++) {
+	size_t i;
+
+	for (i = 0; i < msg->arg_count; i++) {
 		struct mat_msg_arg *arg = &msg->args[i];
 
 		switch (arg->type) {
@@ -99,9 +103,9 @@ static int nl_parse_flow_key_args(struct mat_table *tbl, struct mat_flow_key *ma
 static int nl_parse_action_args(struct mat_table *tbl, struct mat_action_chain **dest, struct mat_msg *msg,
 	size_t *processed)
 {
-	size_t actions = 0;
+	size_t actions = 0, i;
 
-	for (size_t i = 0; i < msg->arg_count; i++) {
+	for (i = 0; i < msg->arg_count; i++) {
 		struct mat_msg_arg *arg = &msg->args[i];
 		actions += arg->type == MAT_FLOW_ARG_ACTION;
 	}
@@ -113,7 +117,7 @@ static int nl_parse_action_args(struct mat_table *tbl, struct mat_action_chain *
 
 	*dest = chain;
 
-	for (size_t i = 0; i < msg->arg_count; i++) {
+	for (i = 0; i < msg->arg_count; i++) {
 		struct mat_msg_arg *arg = &msg->args[i];
 		if (arg->type != MAT_FLOW_ARG_ACTION)
 			continue;

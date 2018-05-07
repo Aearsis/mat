@@ -2,7 +2,7 @@
 # Copyright (C) Ondřej Hlavatý <ohlavaty@redhat.com>
 
 CC = gcc
-CFLAGS = -std=gnu99 -O2  -I$(MAT_ROOT)/src/include -I$(MAT_ROOT)/uapi
+CFLAGS = -std=gnu89 -O2  -I$(MAT_ROOT)/src/include -I$(MAT_ROOT)/uapi
 
 ifneq (${DEBUG},)
 CFLAGS += -g3 -fstack-protector-all

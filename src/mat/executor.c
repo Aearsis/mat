@@ -49,8 +49,9 @@ static int mat_execute_action_chain(struct mat_executor *exec,
 	struct mat_action_chain *chain, struct sk_buff *skb)
 {
 	int err = MAT_RES_NEXT;
+	unsigned i;
 
-	for (unsigned i = 0; i < chain->len; i++) {
+	for (i = 0; i < chain->len; i++) {
 		if ((err = mat_execute_action(exec, &chain->chain[i], skb)))
 			break;
 	}
@@ -174,10 +175,12 @@ struct mat_action_chain *mat_action_chain_create(size_t len)
 struct mat_action_chain *mat_action_chain_clone(struct mat_action_chain *chain)
 {
 	struct mat_action_chain *clone = mat_action_chain_create(chain->len);
+	size_t i;
+
 	if (!clone)
 		return NULL;
 
-	for (size_t i = 0; i < chain->len; i++) {
+	for (i = 0; i < chain->len; i++) {
 		struct mat_action *src = &chain->chain[i];
 		struct mat_action *dst = &clone->chain[i];
 
@@ -205,10 +208,12 @@ err:
 /* Destroy a chain along with owned memory. */
 void mat_action_chain_destroy(struct mat_action_chain *chain)
 {
+	size_t i;
+
 	if (!chain)
 		return;
 
-	for (size_t i = 0; i < chain->len; i++) {
+	for (i = 0; i < chain->len; i++) {
 		struct mat_action *act = &chain->chain[i];
 
 		switch (act->op) {
@@ -229,9 +234,11 @@ void mat_action_chain_destroy(struct mat_action_chain *chain)
  */
 bool mat_action_chain_is_drop_only(struct mat_action_chain *chain)
 {
+	size_t i;
+
 	assert(chain);
 
-	for (size_t i = 0; i < chain->len; i++) {
+	for (i = 0; i < chain->len; i++) {
 		struct mat_action *act = &chain->chain[i];
 
 		if (act->op == MAT_ACT_DROP)

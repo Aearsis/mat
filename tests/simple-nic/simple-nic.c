@@ -131,4 +131,6 @@ int main(int argc, char ** argv)
 	simple_nic_receive(&nic, sample_skb_2);
 
 	simple_nic_destroy(&nic);
+
+	return 0;
 }

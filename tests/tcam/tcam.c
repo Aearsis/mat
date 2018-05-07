@@ -119,4 +119,6 @@ int main(int argc, char ** argv)
 
 	log("testing another packet delivery (MAT should see, but pass the packet)");
 	netif_receive_skb(sample_skb_2);
+
+	return 0;
 }

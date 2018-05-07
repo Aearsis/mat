@@ -64,6 +64,7 @@ int main(int argc, char ** argv)
 	log("\t 4. packet should be delivered with TC 42 after going through all the tables");
 
 	test_packets();
+	return 0;
 }
 
 static void prepare_table_a(struct test_data *test)
